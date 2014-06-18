@@ -10,6 +10,10 @@ Activate the virtualenv::
 
     source /path/to/tasking/manager/env/bin/activate
 
+Initialize the DB::
+
+    initializedb development.ini
+
 Then type the following command::
 
     v1_migration.py path/to/OSMTM.db postgresql://username:password@localhost/osmtm
