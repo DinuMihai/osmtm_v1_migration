@@ -194,7 +194,7 @@ for job in session_v1.query(jobs):
         project.private = job.is_private
         project.instructions = job.workflow
         project.per_task_instructions = job.task_extra
-        project.imagery = job.imagery
+        project.imagery = job.imagery if job.imagery != 'None' else None
         project.license_id = job.license_id
         project.author_id = users[job.author.encode('utf-8')] \
             if job.author else None
@@ -202,7 +202,7 @@ for job in session_v1.query(jobs):
         project.josm_preset = job.josm_preset
 
         if job.featured:
-            project.priority = 2
+            project.priority = 1
 
         session_v2.add(project)
         session_v2.flush()
