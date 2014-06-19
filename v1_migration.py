@@ -118,8 +118,6 @@ for line in f:
     user = line.split(';')
     users[user[0]] = user[1]
 
-print len(users)
-
 for k, u in enumerate(session_v1.query(users_table).all()):
     username = u.username.encode('utf-8')
     if username not in users:
@@ -150,15 +148,17 @@ header("Importing users in v2")
 # inverting users mapping, key is now id
 users_by_id = {v: k for k, v in users.items()}
 
+users_count = 0
 with transaction.manager:
     for id in users_by_id:
         username = users_by_id[id]
         if id != -1:
-            user = User(id, username)
+            user = User(id, username.decode('utf-8'))
             session_v2.add(user)
+            users_count += 1
     session_v2.flush()
 
-success("%d users - successfully imported" % (len(users)))
+success("%d users - successfully imported" % (users_count))
 
 header("Importing licenses")
 with transaction.manager:
