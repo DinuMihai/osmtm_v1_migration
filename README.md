@@ -12,8 +12,8 @@ Activate the virtualenv::
 
 Initialize the DB::
 
-    initializedb development.ini
+    initializedb
 
 Then type the following command::
 
-    v1_migration.py path/to/OSMTM.db postgresql://username:password@localhost/osmtm
+    python v1_migration.py path/to/OSMTM.db postgresql://username:password@localhost/osmtm
