@@ -151,9 +151,13 @@ users_by_id = {v: k for k, v in users.items()}
 users_count = 0
 with transaction.manager:
     for id in users_by_id:
-        username = users_by_id[id]
+        username = users_by_id[id].decode('utf-8')
         if id != -1:
-            user = User(id, username.decode('utf-8'))
+            user = User(id, username)
+            v1_user = session_v1.query(users_table).filter(users_table.c.username == username).one()
+            if v1_user.admin:
+                user.role = user.role_project_manager
+
             session_v2.add(user)
             users_count += 1
     session_v2.flush()
