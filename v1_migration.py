@@ -47,6 +47,14 @@ from sqlalchemy_i18n.manager import translation_manager
 
 import shapely
 
+from shapely.wkt import (
+    loads
+)
+
+from shapely.geometry import (
+    MultiPolygon
+)
+
 from geoalchemy2 import (
     shape,
 )
@@ -226,10 +234,15 @@ for job in session_v1.query(jobs):
             pass
 
         for tile in session_v1.query(tiles).filter(tiles.c.job_id == job.id):
-            step = max / (2 ** (tile.zoom - 1))
-            tb = TileBuilder(step)
-            geometry = tb.create_square(tile.x, tile.y)
-            geometry = ST_Transform(shape.from_shape(geometry, 3857), 4326)
+            if tile.geometry is not None:
+                geometry = loads(tile.geometry)
+            else:
+                step = max / (2 ** (tile.zoom - 1))
+                tb = TileBuilder(step)
+                geometry = tb.create_square(tile.x, tile.y)
+
+            multipolygon = MultiPolygon([geometry])
+            geometry = ST_Transform(shape.from_shape(multipolygon, 3857), 4326)
 
             task = Task(tile.x, tile.y, tile.zoom, geometry)
             task.project_id = project_id
